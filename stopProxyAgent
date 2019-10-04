@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if screen -list | grep -q "chariotProxyAgent"; then
+  screen -ls | grep -E "chariotProxyAgent" | cut -d. -f1 | awk '{print }' | xargs kill 2> /dev/null
+    echo "Chariot proxy agent stopped."
+else
+  echo "Chariot proxy agent isn't running."
+fi
+
