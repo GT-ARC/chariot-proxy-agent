@@ -24,6 +24,8 @@ public class ProxyAgent extends AbstractRESTfulAgentBean {
     private HashMap<String, IActionDescription> cachedActions = new HashMap<>();
 
     private static final String PROPERTY_ACTION = "com.gtarc.chariot.receive_property_action";
+    private static final String ADD_AGENT_ACTION = "com.gtarc.chariot.proxyagent#addAgent";
+    private static final String REMOVE_AGENT_ACTION = "com.gtarc.chariot.proxyagent#removeAgent";
 
     @Override
     public void doStart() throws Exception {
@@ -101,6 +103,18 @@ public class ProxyAgent extends AbstractRESTfulAgentBean {
         invoke(cachedDesc, new String[]{jsonObject});
     }
 
+    @Expose(name = ADD_AGENT_ACTION, scope = ActionScope.GLOBAL)
+    public void addAgent(String agentID, String deviceID) {
+        this.deviceIDToAgentID.put(deviceID, agentID);
+        log.info("Add Agent Mapping: " + deviceID + " -> " + agentID);
+    }
+
+    @Expose(name = REMOVE_AGENT_ACTION, scope = ActionScope.GLOBAL)
+    public void removeAgent(String agentID, String deviceID) {
+        this.deviceIDToAgentID.remove(deviceID);
+        this.cachedActions.remove(agentID);
+        log.info("Remove Agent Mapping: " + deviceID + " -> " + agentID);
+    }
 
     /**
      * Start the Proxy Agent Node
