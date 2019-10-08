@@ -1,23 +1,20 @@
 package com.gtarc.chariot.proxyagent;
 
 import de.dailab.jiactng.agentcore.SimpleAgentNode;
+import de.dailab.jiactng.agentcore.action.AbstractMethodExposingBean;
 import de.dailab.jiactng.agentcore.action.Action;
 import de.dailab.jiactng.agentcore.action.scope.ActionScope;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
-import de.dailab.jiactng.rsga.beans.AbstractRESTfulAgentBean;
 import org.springframework.context.ApplicationContext;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.NotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-public class ProxyAgent extends AbstractRESTfulAgentBean {
+public class ProxyAgent extends AbstractMethodExposingBean {
 
     private HttpClient httpClient = new HttpClient();
     private HashMap<String, String> deviceIDToAgentID = new HashMap<>();
@@ -27,47 +24,15 @@ public class ProxyAgent extends AbstractRESTfulAgentBean {
     private static final String ADD_AGENT_ACTION = "com.gtarc.chariot.proxyagent#addAgent";
     private static final String REMOVE_AGENT_ACTION = "com.gtarc.chariot.proxyagent#removeAgent";
 
+    private MyHttpServer httpServer;
+
     @Override
     public void doStart() throws Exception {
         this.deviceIDToAgentID = httpClient.establishConnection();
+        httpServer = new MyHttpServer(this);
     }
 
-    /**
-     * Example get request.
-     * Invoke with localhost:8080/chariot/ProxyAgent/id?id=test&testParam=1
-     *
-     * @param id        example param
-     * @param testParam example extra param must be from type int
-     * @return a combination of both
-     */
-    @GET
-    @Path("id")
-    @Expose(scope = ActionScope.WEBSERVICE)
-    public String exampleGet(String id, int testParam) {
-        return id + " " + testParam;
-    }
-
-    /**
-     * Example action for a post request in wich the parameters a send via
-     * json in the request body. The header Content-Type application/json must be set.
-     *
-     * @param x first parameter
-     * @param y second parameter
-     * @return the sum of both parameters
-     */
-    @POST
-    @Path("/add")
-    @Expose(scope = ActionScope.WEBSERVICE)
-    public int add(@QueryParam("x") int x,
-                   @QueryParam("y") int y) {
-        return x + y;
-    }
-
-    @POST
-    @Path("sendAction")
-    @Expose(scope = ActionScope.WEBSERVICE)
-    public void relayPropertyDelegation(@QueryParam("device_id") String deviceID,
-                                        @QueryParam("value") String jsonObject) {
+    public void relayPropertyDelegation(String deviceID, String jsonObject) throws Exception {
 
         // Check if device id is in agent list
         String agentID = this.deviceIDToAgentID.get(deviceID);
@@ -78,7 +43,7 @@ public class ProxyAgent extends AbstractRESTfulAgentBean {
             agentID = this.deviceIDToAgentID.get(deviceID);
             if (agentID == null) {
                 System.err.println("Agent not found for device: " + deviceID);
-                return;
+                throw new Exception("Agent not found for device: " + deviceID);
             }
         }
 
@@ -94,7 +59,7 @@ public class ProxyAgent extends AbstractRESTfulAgentBean {
                 cachedDesc = optionalDesc.get();
             else {
                 System.err.println("No action description found for device agent: " + agentID + " of device " + deviceID);
-                return;
+                throw new Exception("No action description found for device agent: " + agentID + " of device " + deviceID);
             }
             this.cachedActions.put(agentID, cachedDesc);
         }
