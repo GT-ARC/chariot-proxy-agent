@@ -47,6 +47,7 @@ public class MyHttpServer {
         byte[] response = message.getBytes(StandardCharsets.UTF_8);
 
         httpExchange.getResponseHeaders().add("Content-Type", contentType);
+        httpExchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         httpExchange.sendResponseHeaders(code, response.length);
 
         OutputStream out = httpExchange.getResponseBody();
