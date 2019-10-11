@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 
 public class MyHttpServer {
@@ -40,25 +41,31 @@ public class MyHttpServer {
     private void createServerContext(HttpServer server) {
         server.createContext("/", httpExchange ->
         {
-            sendResponse(httpExchange, 200, "Pls use /chariot/sendAction", "text/plain; charset=UTF-8");
+            sendResponse(httpExchange, 200, "Pls use /chariot/sendAction");
         });
 
         server.createContext("/chariot/sendAction", this::receiveSendRequest);
     }
 
-    private void sendResponse(HttpExchange httpExchange, int code, String message, String contentType) throws IOException {
-        byte[] response = message.getBytes(StandardCharsets.UTF_8);
+    private void sendResponse(HttpExchange httpExchange, int code, String message) throws IOException {
 
         Headers headers = httpExchange.getResponseHeaders();
         headers.add("Access-Control-Allow-Headers","x-prototype-version,x-requested-with,Content-Type,Authorization");
         headers.add("Access-Control-Allow-Methods","GET,POST");
         headers.add("Access-Control-Allow-Origin","*");
-        headers.add("Content-Type", contentType);
 
         if (httpExchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
             httpExchange.sendResponseHeaders(204, -1);
             return;
         }
+
+        headers.add("Content-Type", "application/json");
+
+        JSONObject messageObject = new JSONObject();
+        messageObject.put("message", message);
+        messageObject.put("code", code);
+
+        byte[] response = messageObject.toJSONString().getBytes(StandardCharsets.UTF_8);
 
         httpExchange.sendResponseHeaders(code, response.length);
 
@@ -77,12 +84,12 @@ public class MyHttpServer {
             body = writer.toString();
         } catch (IOException e) {
             System.err.println("Massage Parse Excepiton");
-            sendResponse(httpExchange, 400, "Message Read Exception", "text/plain; charset=UTF-8");
+            sendResponse(httpExchange, 400, "Message Read Exception");
         }
 
         System.out.println(body);
         if (httpExchange.getRequestMethod().equalsIgnoreCase("OPTIONS"))
-            sendResponse(httpExchange, 200, "","");
+            sendResponse(httpExchange, 200, "");
 
         JSONParser parser = new JSONParser();
         String device_id = "";
@@ -92,15 +99,15 @@ public class MyHttpServer {
             device_id = (String) object.get("device_id");
             jsonObject = ((JSONObject) object.get("value")).toJSONString();
         } catch (ParseException e) {
-            sendResponse(httpExchange, 400, "Message Parse Exception", "text/plain; charset=UTF-8");
+            sendResponse(httpExchange, 400, "Message Parse Exception");
         }
 
         try {
             proxyAgent.relayPropertyDelegation(device_id, jsonObject);
         } catch (Exception e) {
-            sendResponse(httpExchange, 404, e.getMessage(), "text/plain; charset=UTF-8");
+            sendResponse(httpExchange, 404, e.getMessage());
         }
-        sendResponse(httpExchange, 200, "OK", "text/plain; charset=UTF-8");
+        sendResponse(httpExchange, 200, "OK");
     }
 
 }
