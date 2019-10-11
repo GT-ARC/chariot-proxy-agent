@@ -77,7 +77,7 @@ public class MyHttpServer {
             body = writer.toString();
         } catch (IOException e) {
             System.err.println("Massage Parse Excepiton");
-            sendResponse(httpExchange, 400, "Message Parse Exception", "text/plain; charset=UTF-8");
+            sendResponse(httpExchange, 400, "Message Read Exception", "text/plain; charset=UTF-8");
         }
 
         System.out.println(body);
@@ -100,7 +100,7 @@ public class MyHttpServer {
         } catch (Exception e) {
             sendResponse(httpExchange, 404, e.getMessage(), "text/plain; charset=UTF-8");
         }
-        sendResponse(httpExchange, 200, "Allet ok", "text/plain; charset=UTF-8");
+        sendResponse(httpExchange, 200, "OK", "text/plain; charset=UTF-8");
     }
 
 }
