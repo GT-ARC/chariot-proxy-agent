@@ -5,10 +5,12 @@ import de.dailab.jiactng.agentcore.action.AbstractMethodExposingBean;
 import de.dailab.jiactng.agentcore.action.Action;
 import de.dailab.jiactng.agentcore.action.scope.ActionScope;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
+import de.dailab.jiactng.agentcore.ontology.AgentDescription;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 import org.springframework.context.ApplicationContext;
 
 import javax.ws.rs.NotFoundException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +22,7 @@ public class ProxyAgent extends AbstractMethodExposingBean {
     private HashMap<String, String> deviceIDToAgentID = new HashMap<>();
     private HashMap<String, IActionDescription> cachedActions = new HashMap<>();
 
-    private static final String PROPERTY_ACTION = "com.gtarc.chariot.receive_property_action";
+    public static final String PROPERTY_ACTION = "de.gtarc.chariot.deliverytraysensoragent.DeviceBean#handlePropertyAction";
     private static final String ADD_AGENT_ACTION = "com.gtarc.chariot.proxyagent#addAgent";
     private static final String REMOVE_AGENT_ACTION = "com.gtarc.chariot.proxyagent#removeAgent";
 
@@ -47,6 +49,8 @@ public class ProxyAgent extends AbstractMethodExposingBean {
             }
         }
 
+        thisAgent.searchAgent(new AgentDescription());
+
         // Receive the cached action if no action is cached search for new one
         IActionDescription cachedDesc = this.cachedActions.get(agentID);
         if (cachedDesc == null) {
@@ -65,7 +69,7 @@ public class ProxyAgent extends AbstractMethodExposingBean {
         }
 
         // Invoke the agent
-        invoke(cachedDesc, new String[]{jsonObject});
+        invoke(cachedDesc, new Serializable[]{jsonObject});
     }
 
     @Expose(name = ADD_AGENT_ACTION, scope = ActionScope.GLOBAL)

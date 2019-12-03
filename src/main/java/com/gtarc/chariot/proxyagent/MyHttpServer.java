@@ -65,6 +65,7 @@ public class MyHttpServer {
         messageObject.put("message", message);
         messageObject.put("code", code);
 
+
         byte[] response = messageObject.toJSONString().getBytes(StandardCharsets.UTF_8);
 
         httpExchange.sendResponseHeaders(code, response.length);
