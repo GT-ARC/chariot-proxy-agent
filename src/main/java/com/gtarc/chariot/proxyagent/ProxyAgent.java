@@ -22,7 +22,7 @@ public class ProxyAgent extends AbstractMethodExposingBean {
     private HashMap<String, String> deviceIDToAgentID = new HashMap<>();
     private HashMap<String, IActionDescription> cachedActions = new HashMap<>();
 
-    public static final String PROPERTY_ACTION = "de.gtarc.chariot.deliverytraysensoragent.DeviceBean#handlePropertyAction";
+    public static final String PROPERTY_ACTION = "de.gtarc.chariot.handlePropertyAction";
     private static final String ADD_AGENT_ACTION = "com.gtarc.chariot.proxyagent#addAgent";
     private static final String REMOVE_AGENT_ACTION = "com.gtarc.chariot.proxyagent#removeAgent";
 
