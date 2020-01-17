@@ -1,0 +1,18 @@
+[
+  {
+    "command": "stop",
+    "uuid": "example-uuid",
+    "inputs": {
+      "device-uuid": "device-example-uuid",
+      "second-parameter": "example-parameter"
+    }
+  },
+  {
+    "command": "disconnect",
+    "uuid": "example-uuid-2",
+    "inputs": {
+      "device-uuid": "device-example-uuid-2",
+      "second-parameter": "example-parameter-2"
+    }
+  }
+]

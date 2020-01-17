@@ -1,12 +1,11 @@
 package com.gtarc.chariot.proxyagent;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
@@ -61,12 +60,12 @@ public class MyHttpServer {
 
         headers.add("Content-Type", "application/json");
 
-        JSONObject messageObject = new JSONObject();
-        messageObject.put("message", message);
-        messageObject.put("code", code);
+        JsonObject messageObject = new JsonObject();
+        messageObject.addProperty("message", message);
+        messageObject.addProperty("code", code);
 
 
-        byte[] response = messageObject.toJSONString().getBytes(StandardCharsets.UTF_8);
+        byte[] response = messageObject.toString().getBytes(StandardCharsets.UTF_8);
 
         httpExchange.sendResponseHeaders(code, response.length);
 
@@ -92,16 +91,12 @@ public class MyHttpServer {
         if (httpExchange.getRequestMethod().equalsIgnoreCase("OPTIONS"))
             sendResponse(httpExchange, 200, "");
 
-        JSONParser parser = new JSONParser();
         String device_id = "";
         String jsonObject = "";
-        try {
-            JSONObject object = (JSONObject) parser.parse(body);
-            device_id = (String) object.get("device_id");
-            jsonObject = ((JSONObject) object.get("value")).toJSONString();
-        } catch (ParseException e) {
-            sendResponse(httpExchange, 400, "Message Parse Exception");
-        }
+
+        JsonObject object = (JsonObject) JsonParser.parseString(body);
+        device_id = object.getAsJsonPrimitive("device_id").getAsString();
+        jsonObject = object.get("value").getAsJsonObject().toString();
 
         try {
             proxyAgent.relayPropertyDelegation(device_id, jsonObject);

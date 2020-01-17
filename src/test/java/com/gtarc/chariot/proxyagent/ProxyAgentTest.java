@@ -9,12 +9,9 @@ import org.junit.Test;
  */
 public class ProxyAgentTest
 {
-    /**
-     * Rigorous Test :-)
-     */
+
     @Test
-    public void shouldAnswerWithTrue()
-    {
-        assertTrue( true );
+    public void testReceivePlanRequest() throws Exception {
+        new ProxyAgent().receivePlanRequest(PlanRequestTest.getJson());
     }
 }

@@ -1,18 +1,17 @@
 package com.gtarc.chariot.proxyagent;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 public class HttpClient {
-    private static final String startUrl = "http://chariot-km.dai-lab.de:81/monitoringservice/";
+    private static final String startUrl = "http://chariot-km.dai-lab.de:8080/v1/monitoringservice/";
     private static final String postfix = "?format=json";
     private static String mappingsURL = "";
     private OkHttpClient client = new OkHttpClient();
@@ -25,26 +24,26 @@ public class HttpClient {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            JSONParser parser = new JSONParser();
-
             String body = response.body().string();
             if (response.code() != 404 && !body.equals("[]")) {
 
-                Object receivedO = parser.parse(body);
+                Object receivedO = JsonParser.parseString(body);
 
-                JSONObject monService;
-                if (receivedO instanceof JSONArray) monService = ((JSONObject) ((JSONArray) receivedO).get(0));
-                else monService = ((JSONObject) receivedO);
+                JsonObject monService;
+                if (receivedO instanceof JsonArray) monService = ((JsonObject) ((JsonArray) receivedO).get(0));
+                else monService = ((JsonObject) receivedO);
 
-                JSONObject mapping = ((JSONObject) monService.get("agentlist"));
-                mappingsURL = (String) mapping.get("url");
-                JSONArray jsonArray = (JSONArray) mapping.get("mappings");
+                JsonObject mapping = ((JsonObject) monService.get("agentlist"));
+                mappingsURL = mapping.getAsJsonPrimitive("url").getAsString();
+                JsonArray jsonArray = (JsonArray) mapping.get("mappings");
                 jsonArray.forEach(o -> {
-                    JSONObject element = ((JSONObject) o);
-                    retMap.put((String) element.get("device_id"), (String) element.get("agent_id"));
+                    JsonObject element = o.getAsJsonObject();
+                    retMap.put(
+                            element.getAsJsonPrimitive("device_id").getAsString(),
+                            element.getAsJsonPrimitive("agent_id").getAsString());
                 });
             }
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return retMap;
