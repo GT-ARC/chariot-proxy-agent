@@ -8,16 +8,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
-public class PlanRequestTest {
+public class ProxyRelayRequestTest {
 
     @Test
     public void testParsing() {
-        Type listType = new TypeToken<ArrayList<PlanRequest>>(){}.getType();
-        List<PlanRequest> planRequestList = new Gson().fromJson(getJson(), listType);
+        Type listType = new TypeToken<ArrayList<ProxyRelayRequest>>(){}.getType();
+        List<ProxyRelayRequest> planRequest = new Gson().fromJson(getJson(), listType);
 
-        System.out.println(planRequestList.toString());
+        System.out.println(planRequest.toString());
     }
 
 

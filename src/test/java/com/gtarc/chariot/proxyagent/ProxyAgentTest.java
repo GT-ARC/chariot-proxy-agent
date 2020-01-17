@@ -12,6 +12,6 @@ public class ProxyAgentTest
 
     @Test
     public void testReceivePlanRequest() throws Exception {
-        new ProxyAgent().receivePlanRequest(PlanRequestTest.getJson());
+        new ProxyAgent().receivePlanRequest(ProxyRelayRequestTest.getJson());
     }
 }

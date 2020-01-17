@@ -7,11 +7,9 @@ import de.dailab.jiactng.agentcore.action.AbstractMethodExposingBean;
 import de.dailab.jiactng.agentcore.action.Action;
 import de.dailab.jiactng.agentcore.action.scope.ActionScope;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
-import de.dailab.jiactng.agentcore.ontology.AgentDescription;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 import org.springframework.context.ApplicationContext;
 
-import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -40,17 +38,9 @@ public class ProxyAgent extends AbstractMethodExposingBean {
         httpServer = new MyHttpServer(this);
     }
 
-    /**
-     * Sends the {@code jsonObject} to the agent with the device uuid {@code uuid}
-     * If the device id isn't cached do a lookup in the kms
-     *
-     * @param uuid
-     * @param jsonObject
-     * @throws Exception
-     */
-    public void relayPropertyDelegation(String uuid, String jsonObject) throws Exception {
+    public void relayPropertyDelegation(ProxyRelayRequest receivedProxyRelayRequest) throws Exception {
 
-        String agentID = Util.getAgentIDByUUID(uuid);
+        String agentID = Util.getAgentIDByUUID(receivedProxyRelayRequest.getUuid());
 
         // Receive the cached action if no action is cached search for new one
         IActionDescription cachedDesc = this.cachedActions.get(agentID);
@@ -72,27 +62,27 @@ public class ProxyAgent extends AbstractMethodExposingBean {
             if (optionalDesc.isPresent())
                 cachedDesc = optionalDesc.get();
             else {
-                System.err.println("No action description found for device agent: " + agentID + " of device " + uuid);
-                throw new Exception("No action description found for device agent: " + agentID + " of device " + uuid);
+                System.err.println("No action description found for device agent: " + agentID + " of device " + receivedProxyRelayRequest.getUuid());
+                throw new Exception("No action description found for device agent: " + agentID + " of device " + receivedProxyRelayRequest.getUuid());
             }
             this.cachedActions.put(agentID, cachedDesc);
             this.cachedActionsTimer.put(agentID, new Date().getTime());
         }
 
         // Invoke the agent
-        invoke(cachedDesc, new Serializable[]{jsonObject});
+        invoke(cachedDesc, new Serializable[]{receivedProxyRelayRequest.getJson()});
     }
 
     @Expose(name = RECEIVE_PLAN_REQUEST, scope = ActionScope.GLOBAL)
     public void receivePlanRequest(String planRequestJson) throws Exception {
 
         // Parse the json into a plan request
-        Type listType = new TypeToken<ArrayList<PlanRequest>>(){}.getType();
-        List<PlanRequest> planRequestList = new Gson().fromJson(planRequestJson, listType);
+        Type listType = new TypeToken<ArrayList<ProxyRelayRequest>>(){}.getType();
+        List<ProxyRelayRequest> proxyRelayRequestList = new Gson().fromJson(planRequestJson, listType);
 
-        for(PlanRequest planRequest : planRequestList) {
-            planRequest.addAgentIDMappingToInput();
-            relayPropertyDelegation(planRequest.getUuid(), planRequest.getJson());
+        for(ProxyRelayRequest proxyRelayRequest : proxyRelayRequestList) {
+            proxyRelayRequest.addAgentIDMappingToInput();
+            relayPropertyDelegation(proxyRelayRequest);
         }
     }
 

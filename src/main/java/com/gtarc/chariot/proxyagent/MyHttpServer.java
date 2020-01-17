@@ -1,20 +1,18 @@
 package com.gtarc.chariot.proxyagent;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.commons.io.IOUtils;
 
-import javax.ws.rs.NotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 
 public class MyHttpServer {
@@ -91,15 +89,10 @@ public class MyHttpServer {
         if (httpExchange.getRequestMethod().equalsIgnoreCase("OPTIONS"))
             sendResponse(httpExchange, 200, "");
 
-        String device_id = "";
-        String jsonObject = "";
-
-        JsonObject object = (JsonObject) JsonParser.parseString(body);
-        device_id = object.getAsJsonPrimitive("device_id").getAsString();
-        jsonObject = object.get("value").getAsJsonObject().toString();
+        ProxyRelayRequest receivedProxyRelayRequest = new Gson().fromJson(body, ProxyRelayRequest.class);
 
         try {
-            proxyAgent.relayPropertyDelegation(device_id, jsonObject);
+            proxyAgent.relayPropertyDelegation(receivedProxyRelayRequest);
         } catch (Exception e) {
             sendResponse(httpExchange, 404, e.getMessage());
         }

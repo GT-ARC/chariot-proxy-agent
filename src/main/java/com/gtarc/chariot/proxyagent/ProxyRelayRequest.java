@@ -6,15 +6,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class PlanRequest {
+public class ProxyRelayRequest {
 
     private String command;
     private String uuid;
     private HashMap<String, String> inputs;
 
-    public PlanRequest() { }
+    public ProxyRelayRequest() { }
 
-    public PlanRequest(String command, String uuid, HashMap<String, String> inputs) {
+    public ProxyRelayRequest(String command, String uuid, HashMap<String, String> inputs) {
         this.command = command;
         this.uuid = uuid;
         this.inputs = inputs;
@@ -42,7 +42,7 @@ public class PlanRequest {
     }
 
     public String getJson() {
-        return new Gson().toJson(this, PlanRequest.class);
+        return new Gson().toJson(this, ProxyRelayRequest.class);
     }
 
     public String getCommand() {
