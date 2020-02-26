@@ -17,6 +17,9 @@ public class HttpClient {
     private OkHttpClient client = new OkHttpClient();
 
     public HashMap<String, String> establishConnection() {
+
+        System.out.println("Get monitoring map");
+
         HashMap<String, String> retMap = new HashMap<>();
         Request request = new Request.Builder()
                 .url(startUrl + postfix)
@@ -40,11 +43,12 @@ public class HttpClient {
                     JsonObject element = o.getAsJsonObject();
                     retMap.put(
                             element.getAsJsonPrimitive("device_id").getAsString(),
-                            element.getAsJsonPrimitive("agent_id").getAsString());
+                            element.getAsJsonPrimitive("agent_id").getAsString()
+                    );
                 });
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return retMap;
     }

@@ -74,7 +74,7 @@ public class MyHttpServer {
     }
 
     private void receiveSendRequest(HttpExchange httpExchange) throws IOException {
-        System.out.println("Request: " + Thread.currentThread().getName());
+//        System.out.println("Request: " + Thread.currentThread().getName());
         String body = "";
         try {
             StringWriter writer = new StringWriter();
@@ -96,6 +96,7 @@ public class MyHttpServer {
         } catch (Exception e) {
             sendResponse(httpExchange, 404, e.getMessage());
         }
+        System.out.println("OK");
         sendResponse(httpExchange, 200, "OK");
     }
 

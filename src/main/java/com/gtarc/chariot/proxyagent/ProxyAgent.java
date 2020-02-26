@@ -70,6 +70,7 @@ public class ProxyAgent extends AbstractMethodExposingBean {
         }
 
         // Invoke the agent
+        System.out.println("Agent found and invoked");
         invoke(cachedDesc, new Serializable[]{receivedProxyRelayRequest.getJson()});
     }
 
