@@ -22,6 +22,7 @@ public class ProxyAgent extends AbstractMethodExposingBean {
     private HashMap<String, IActionDescription> cachedActions = new HashMap<>();
     private HashMap<String, Long> cachedActionsTimer = new HashMap<>();
 
+    private static final String GET_AGENT_ID = "com.gtarc.chariot.proxyagent#getAgentID";
     public static final String PROPERTY_ACTION = "de.gtarc.chariot.handlePropertyAction";
     private static final String ADD_AGENT_ACTION = "com.gtarc.chariot.proxyagent#addAgent";
     private static final String REMOVE_AGENT_ACTION = "com.gtarc.chariot.proxyagent#removeAgent";
@@ -99,6 +100,11 @@ public class ProxyAgent extends AbstractMethodExposingBean {
         Util.removeAgent(deviceID);
         this.cachedActions.remove(agentID);
         log.info("Remove Agent Mapping: " + deviceID + " -> " + agentID);
+    }
+
+    @Expose(name = GET_AGENT_ID, scope = ActionScope.GLOBAL)
+    public String getAgentId(String deviceID) throws Exception {
+        return Util.getAgentIDByUUID(deviceID);
     }
 
     /**
