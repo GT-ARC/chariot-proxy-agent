@@ -104,6 +104,7 @@ public class ProxyAgent extends AbstractMethodExposingBean {
 
     @Expose(name = GET_AGENT_ID, scope = ActionScope.GLOBAL)
     public String getAgentId(String deviceID) throws Exception {
+        System.out.println("Get agent ID is called: " + deviceID);
         return Util.getAgentIDByUUID(deviceID);
     }
 
