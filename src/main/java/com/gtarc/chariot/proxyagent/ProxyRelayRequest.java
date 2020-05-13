@@ -11,6 +11,7 @@ public class ProxyRelayRequest {
     private String command;
     private String uuid;
     private HashMap<String, String> inputs;
+    private String json;
 
     public ProxyRelayRequest() { }
 
