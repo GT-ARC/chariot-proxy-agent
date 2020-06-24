@@ -133,7 +133,7 @@
               <goal>assemble</goal>
             </goals>
             <configuration>
-              <extraJvmArguments>-Xms512m -XmX1024m</extraJvmArguments>
+            <!--  <extraJvmArguments>-Xms512m -XmX1024m</extraJvmArguments> -->
               <repositoryLayout>flat</repositoryLayout>
               <useWildcardClassPath>true</useWildcardClassPath>
               <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>

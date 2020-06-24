@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class HttpClient {
-    private static final String startUrl = "http://chariot-km.dai-lab.de:8080/v1/monitoringservice/";
+    private static final String startUrl = "http://localhost:8080/v1/monitoringservice/";
     private static final String postfix = "?format=json";
     private static String mappingsURL = "";
     private OkHttpClient client = new OkHttpClient();
