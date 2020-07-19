@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class HttpClient {
-    private static final String startUrl = "http://localhost:8080/v1/monitoringservice/";
+
+    private static final String endpoint = "/monitoringservice/";
+//    private static final String startUrl = "http://localhost:8080/v1/monitoringservice/";
     private static final String postfix = "?format=json";
     private static String mappingsURL = "";
     private OkHttpClient client = new OkHttpClient();
@@ -22,7 +24,7 @@ public class HttpClient {
 
         HashMap<String, String> retMap = new HashMap<>();
         Request request = new Request.Builder()
-                .url(startUrl + postfix)
+                .url(ProxyAgent.kmsURL + endpoint + postfix)
                 .get()
                 .build();
 

@@ -18,13 +18,14 @@ import java.util.concurrent.Executors;
 public class MyHttpServer {
 
     static final int PORT = 8080;
+    static Integer definedPort = ProxyAgent.serverPort;
     private ProxyAgent proxyAgent;
 
     MyHttpServer(ProxyAgent proxyAgent) {
         this.proxyAgent = proxyAgent;
         try
         {
-            HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+            HttpServer server = HttpServer.create(new InetSocketAddress(definedPort == null ? PORT : definedPort), 0);
             createServerContext(server);
             server.setExecutor(Executors.newCachedThreadPool());
             server.start();

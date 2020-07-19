@@ -33,7 +33,7 @@ is used to generate runnable files: `./target/appassembler/bin/ChariotProxyAgent
 
 The following persons can answer your questions: 
 
-- Frederic Abraham: [Frederic-Marvin.Abraham@gt-arc.com](mailto://Frederic-Marvin.Abraham@gt-arc.com)
+- Frederic Abraham: [mail@fabraham.dev](mailto://mail@fabraham.dev)
 - Cem Akpolat: [akpolatcem@gmail.com](mailto://akpolatcem@gmail.com)
 
  

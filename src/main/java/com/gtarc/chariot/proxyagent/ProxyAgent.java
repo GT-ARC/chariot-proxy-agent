@@ -29,12 +29,14 @@ public class ProxyAgent extends AbstractMethodExposingBean {
     private static final String RECEIVE_PLAN_REQUEST = "com.gtarc.chariot.proxyagent#receivePlanRequest";
 
     private MyHttpServer httpServer;
-
+    public static String kmsURL;
+    public static Integer serverPort;
 
 
     @Override
     public void doStart() throws Exception {
         INSTANCE = this;
+        log.info(kmsURL);
         Util.setDeviceIDToAgentID(httpClient.establishConnection());
         httpServer = new MyHttpServer(this);
     }
@@ -122,5 +124,17 @@ public class ProxyAgent extends AbstractMethodExposingBean {
         } catch (LifecycleException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setKmsURL(String kmsURL) {
+        ProxyAgent.kmsURL = kmsURL;
+    }
+
+    public String getKmsURL() {
+        return kmsURL;
+    }
+
+    public void setServerPort(Integer serverPort) {
+        ProxyAgent.serverPort = serverPort;
     }
 }
