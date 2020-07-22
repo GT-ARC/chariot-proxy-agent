@@ -24,7 +24,7 @@ Each IoT device agent includes `handleProperty` function, which is called by thi
 As mentioned before, proxy agent can access this function with the matching agentId stored by the monitoring agent in the CHARIOT database. 
 
 
-### Usage
+## Usage
 Maven is used in this project. Just run `mvn package`.\
 To start the proxy-agent the plugin `appassembler-maven-plugin` 
 is used to generate runnable files: `./target/appassembler/bin/ChariotProxyAgent`
